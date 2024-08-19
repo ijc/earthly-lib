@@ -61,9 +61,12 @@ CARGO:
     END
     RUN --mount=$EARTHLY_RUST_CARGO_HOME_CACHE --mount=$EARTHLY_RUST_TARGET_CACHE \
       set -e; \
+      echo "+CARGO: cargo $args"; \
       cargo $args; \
+      echo "+CARGO: sweeping target cache"; \
       cargo sweep -r -t $EARTHLY_SWEEP_DAYS; \
       cargo sweep -r -i; \
+      echo "+CARGO: copying output"; \
       $EARTHLY_FUNCTIONS_HOME/copy-output.sh "$output";
     RUN $EARTHLY_FUNCTIONS_HOME/rename-output.sh "$output"
 
