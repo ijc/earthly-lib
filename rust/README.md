@@ -29,12 +29,6 @@ DO rust+INIT ...
 Overrides cache prefix for cache IDS. Its value is exported to the build environment under the entry: `$EARTHLY_CACHE_PREFIX`. 
 By default `${EARTHLY_TARGET_PROJECT_NO_TAG}#${OS_RELEASE}#earthly-cargo-cache`
 
-#### `keep_fingerprints (false)`
-
-By default `+CARGO` removes the [compiler fingerprints](https://doc.rust-lang.org/nightly/nightly-rustc/cargo/core/compiler/fingerprint/struct.Fingerprint.html) of those packages found in your source code (not their dependencies), to force their recompilation and work even when the Earthly `COPY` commands overwrote file mtimes (by default).
-
-Set `keep_fingerprints=true` to keep the source packages fingerprints and avoid their recompilation, when source packages have been copied with `--keep-ts `option.
-
 #### `sweep_days (4)`
 `+CARGO` calls use cargo-sweep to clean build artifacts that haven't been accessed for this number of days.
 
