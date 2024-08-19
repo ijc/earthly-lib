@@ -65,7 +65,7 @@ CARGO:
       cargo sweep -r -t $EARTHLY_SWEEP_DAYS; \
       cargo sweep -r -i; \
       $EARTHLY_FUNCTIONS_HOME/copy-output.sh "$output";
-    RUN $EARTHLY_FUNCTIONS_HOME/rename-output.sh
+    RUN $EARTHLY_FUNCTIONS_HOME/rename-output.sh "$output"
 
 # SET_CACHE_MOUNTS_ENV sets the following entries in the environment, to be used to mount the cargo caches.
 #   - EARTHLY_RUST_CARGO_HOME_CACHE: Code of the mount cache for the cargo home.
@@ -177,13 +177,15 @@ INSTALL_EARTHLY_FUNCTIONS:
           chmod +x $EARTHLY_FUNCTIONS_HOME/copy-output.sh; \
     # rename-output.sh moves files back from $OUTPUT_TMP_FOLDER to ./target
     # this function is expected to be called from a build context with ./target not belonging to a shared cache
-          echo "mkdir -p target;
-                if [ \"\$(find \"$OUTPUT_TMP_FOLDER\" -type f -printf . | wc -c)\" -eq 0 ]; then
-                    echo \"no files found within ./target matching the provided output regexp\";
-                else
-                    cp -ruT \"$OUTPUT_TMP_FOLDER\" target;
-                    rm -rf \"$OUTPUT_TMP_FOLDER\";
-                fi;" > $EARTHLY_FUNCTIONS_HOME/rename-output.sh; \
+          echo "if [ -n \"\$1\" ]; then
+                    mkdir -p target;
+                    if [ \"\$(find \"$OUTPUT_TMP_FOLDER\" -type f -printf . | wc -c)\" -eq 0 ]; then
+                        echo \"no files found within ./target matching the provided output regexp\";
+                    else
+                        cp -ruT \"$OUTPUT_TMP_FOLDER\" target;
+                        rm -rf \"$OUTPUT_TMP_FOLDER\";
+                    fi;
+		fi;" > $EARTHLY_FUNCTIONS_HOME/rename-output.sh; \
           chmod +x $EARTHLY_FUNCTIONS_HOME/rename-output.sh; \
         fi;
 
